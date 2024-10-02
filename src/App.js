@@ -1,25 +1,31 @@
 import "./App.css";
-import { useState /*,useEffect*/ } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState([]);
   // const [data, setData] = useState("");
 
-  // useEffect(() => {
-  //   fetch("https://todoapi-20h6.onrender.com")
-  //     .then((response) => response.text())
-  //     .then((data) => {
-  //       setData(data);
-  //     })
-  //     .catch((error) => console.error("Błąd:", error));
-  // }, []);
+  useEffect(() => {
+    const results = async () => {
+      // let { data } = await axios.get("http://localhost:3001");
+      let { data } = await axios.get("https://todoapi-20h6.onrender.com");
+
+      setTodos(data);
+    };
+    results();
+  }, []);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const sendValue = () => {
+    axios.post("https://todoapi-20h6.onrender.com/addTodo", {
+      name: inputValue,
+    });
+    // axios.post("http://localhost:3001/addTodo", { name: inputValue });
     setTodos([...todos, inputValue]);
   };
 
@@ -31,8 +37,8 @@ function App() {
         <button onClick={sendValue}>Dodaj</button>
       </div>
       <ul>
-        {todos.map((todo, index) => (
-          <li key={index}>{todo}</li>
+        {todos.map((todo) => (
+          <li key={todo._id}>{todo.name}</li>
         ))}
       </ul>
     </div>
