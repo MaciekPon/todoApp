@@ -26,7 +26,6 @@
 
 .input-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -39,6 +38,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
