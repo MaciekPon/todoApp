@@ -4,8 +4,8 @@ import axios from "axios";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
-  const [todos, setTodos] = useState([]);
-  let [selectedIds, setSelectedIds] = useState([])
+  let [todos, setTodos] = useState([]);
+  // const [data, setData] = useState("");
 
   const results = async () => {
     // let { data } = await axios.get("http://localhost:3001");
@@ -22,18 +22,20 @@ function App() {
     setInputValue(e.target.value);
   };
 
-  const sendValue = async () => {
-    await axios.post("https://todoapi-20h6.onrender.com/addTodo", {
+  const sendValue = () => {
+    axios.post("https://todoapi-20h6.onrender.com/addTodo", {
       name: inputValue,
     });
     // axios.post("http://localhost:3001/addTodo", { name: inputValue });
-    // setTodos([...todos, { name: inputValue }]);
-    await results()
+    results();
   };
 
-  const checkTodo = (toDoId) => {
-    setSelectedIds([...selectedIds, toDoId])
-  }
+  const checkTodo = (todoId) => {
+    axios.post("https://todoapi-20h6.onrender.com/checkTodo", { todoId });
+
+    // axios.post("http://localhost:3001/checkTodo", { todoId });
+    results();
+  };
 
   return (
     <div className="App">
@@ -42,13 +44,18 @@ function App() {
         <input id="addToDo" onInput={handleChange} type="text" />
         <button onClick={sendValue}>Dodaj</button>
       </div>
-      
-      <ul style={{ listStyle: 'none' }}>
+      <ul style={{ listStyle: "none" }}>
         {todos.map((todo) => (
-          <li style={{ textDecorationLine: selectedIds.includes(todo._id) ? 'line-through' : 'none' }} key={todo._id}>{todo.name} <button onClick={() => checkTodo(todo._id)}>Odznacz</button><button>Usuń</button></li>
+          <li
+            key={todo._id}
+            style={{ textDecoration: todo.isEnded ? "line-through" : "" }}
+          >
+            {todo.name}
+            <button onClick={() => checkTodo(todo._id)}>Odznacz</button>
+          </li>
         ))}
       </ul>
-    </div >
+    </div>
   );
 }
 
