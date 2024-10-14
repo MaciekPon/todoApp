@@ -37,7 +37,7 @@ function App() {
   };
 
   const deleteTodo = async (toDoId) => {
-    await axios.delete(`${url + toDoId}`);
+    await axios.delete(`${url}/${toDoId}`);
     results()
   }
 
