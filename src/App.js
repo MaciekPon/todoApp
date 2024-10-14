@@ -5,45 +5,63 @@ import axios from "axios";
 function App() {
   const [inputValue, setInputValue] = useState("");
   let [todos, setTodos] = useState([]);
+  const url = process.env.REACT_APP_API_URL
   // const [data, setData] = useState("");
-
   const results = async () => {
-    // let { data } = await axios.get("http://localhost:3001");
-    let { data } = await axios.get("https://todoapi-20h6.onrender.com");
-
+    let { data } = await axios.get(url);
     setTodos(data);
   };
 
   useEffect(() => {
     results();
-  }, []);
+  }, [todos]);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const sendValue = () => {
-    axios.post("https://todoapi-20h6.onrender.com/addTodo", {
-      name: inputValue,
-    });
-    // axios.post("http://localhost:3001/addTodo", { name: inputValue });
+  const sendValue = async () => {
+    // axios.post("https://todoapi-20h6.onrender.com/addTodo", {
+    // name: inputValue,
+    // });
+    await axios.post(url + `/addTodo`, { name: inputValue });
+    results();
+    setInputValue("")
+  };
+
+  const checkTodo = async (toDoId) => {
+    // axios.post("https://todoapi-20h6.onrender.com/checkTodo", { toDoId });
+
+    await axios.put(url + "/checkTodo", { toDoId });
     results();
   };
 
-  const checkTodo = (todoId) => {
-    axios.post("https://todoapi-20h6.onrender.com/checkTodo", { todoId });
+  const deleteTodo = async (toDoId) => {
+    await axios.delete(url + toDoId);
+    results()
+  }
 
-    // axios.post("http://localhost:3001/checkTodo", { todoId });
-    results();
-  };
+  const deleteAll = async () => {
+    let toDosIds = []
+    todos.map(todo => {
+      toDosIds.push(todo._id)
+    })
+
+    await axios.put(url + '/delete-all', { toDosIds })
+  }
 
   return (
     <div className="App">
       <label htmlFor="addToDo">Dodaj coś do zrobienia</label>
       <div className="input-wrapper">
-        <input id="addToDo" onInput={handleChange} type="text" />
+        <input id="addToDo" onInput={handleChange} type="text" value={inputValue} />
         <button onClick={sendValue}>Dodaj</button>
       </div>
+
+      <div>
+        <button onClick={deleteAll}>Usuń wszystkie</button>
+      </div>
+
       <ul style={{ listStyle: "none" }}>
         {todos.map((todo) => (
           <li
@@ -52,6 +70,7 @@ function App() {
           >
             {todo.name}
             <button onClick={() => checkTodo(todo._id)}>Odznacz</button>
+            <button onClick={() => deleteTodo(todo._id)}>Usuń</button>
           </li>
         ))}
       </ul>
